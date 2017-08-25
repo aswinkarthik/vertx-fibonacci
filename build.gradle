@@ -1,19 +1,21 @@
 buildscript {
-    ext.kotlin_version = '1.1.3'
-
     repositories {
-        mavenCentral()
+        jcenter()
     }
-
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
     }
 }
 
-apply plugin: "kotlin"
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: "java"
+apply plugin: 'idea'
+
+group 'vertx-trials'
+version '1.0-SNAPSHOT'
+
 
 sourceSets {
-    main.kotlin.srcDirs += 'src/main/kotlin'
     main.java.srcDirs += 'src/main/java'
 }
 
@@ -22,14 +24,26 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib"
-    compile "org.jetbrains.kotlin:kotlin-reflect"
-    testCompile "org.jetbrains.kotlin:kotlin-test"
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit"
+    compile 'io.vertx:vertx-web:3.4.2'
+
+    testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile 'junit:junit:4.12'
 }
 
-kotlin {
-    experimental {
-        coroutines 'enable'
+shadowJar {
+    classifier = 'fat'
+    manifest {
+        attributes 'Main-Class': 'io.vertx.core.Launcher'
+        attributes 'Main-Verticle': 'ApplicationVerticle'
     }
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+    }
+    destinationDir = rootProject.file('artifacts')
+}
+
+task run(type: Exec) {
+    workingDir = rootProject.file('artifacts')
+    commandLine 'java', '-jar', 'fib-vertx-1.0-SNAPSHOT-fat.jar'
+
 }
