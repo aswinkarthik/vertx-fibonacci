@@ -2,7 +2,7 @@
 
 [Vert.X](http://vertx.io/) is a toolkit for developing reactive applications on JVM
 
-This is an test project to learn on how to expose a JSON endpoint that generates fibonacci series.
+This is a test project to learn vertx. It has a JSON endpoint that generates and returns fibonacci series.
 
 ## Usage
 
